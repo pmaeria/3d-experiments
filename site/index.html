@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>3D Experiments</title>
+  <meta name="description" content="A collection of interactive 3D experiments that run in the browser." />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚙️</text></svg>" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..700;1,9..144,300..500&family=Inter:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #0c0a09;
+      --card: #16120f;
+      --line: rgba(240, 220, 190, .12);
+      --text: #efe6d8;
+      --muted: #a39a8c;
+      --accent: #e3b766;
+      --serif: 'Fraunces', Georgia, serif;
+      --sans: 'Inter', system-ui, sans-serif;
+    }
+    * { box-sizing: border-box; }
+    html { background: var(--bg); }
+    body {
+      margin: 0; min-height: 100vh; color: var(--text); font-family: var(--sans); font-size: 15px; line-height: 1.55;
+      background:
+        radial-gradient(1200px 600px at 15% -10%, rgba(227, 183, 102, .10), transparent 60%),
+        radial-gradient(900px 500px at 100% 0%, rgba(120, 80, 200, .07), transparent 60%),
+        var(--bg);
+    }
+    a { color: inherit; text-decoration: none; }
+    .wrap { max-width: 1180px; margin: 0 auto; padding: 0 28px; }
+
+    header { padding: 96px 0 56px; }
+    .eyebrow { font-size: 12px; letter-spacing: .22em; text-transform: uppercase; color: var(--accent); margin: 0 0 18px; }
+    h1 { font-family: var(--serif); font-weight: 400; font-size: clamp(44px, 7vw, 84px); line-height: 1; letter-spacing: -.02em; margin: 0; }
+    h1 em { font-style: italic; font-weight: 300; color: var(--accent); }
+    .lede { max-width: 560px; color: var(--muted); font-size: 17px; margin: 22px 0 0; }
+
+    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 28px; padding-bottom: 96px; }
+
+    .card {
+      position: relative; display: flex; flex-direction: column; border-radius: 14px; overflow: hidden;
+      background: var(--card); border: 1px solid var(--line);
+      transition: transform .35s cubic-bezier(.2, .7, .2, 1), border-color .35s, box-shadow .35s;
+    }
+    .card:hover, .card:focus-visible { transform: translateY(-4px); border-color: rgba(227, 183, 102, .45); box-shadow: 0 24px 60px rgba(0, 0, 0, .5); outline: none; }
+    .thumb { position: relative; aspect-ratio: 16 / 10; overflow: hidden; background: #000; }
+    .thumb img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform .8s cubic-bezier(.2, .7, .2, 1); }
+    .card:hover .thumb img { transform: scale(1.04); }
+    .play {
+      position: absolute; right: 14px; bottom: 14px; padding: 7px 14px; border-radius: 999px;
+      font-size: 13px; font-weight: 500; background: rgba(12, 10, 9, .72); backdrop-filter: blur(8px);
+      border: 1px solid rgba(255, 255, 255, .14); opacity: 0; transform: translateY(6px); transition: opacity .3s, transform .3s;
+    }
+    .card:hover .play, .card:focus-visible .play { opacity: 1; transform: none; }
+    .body { padding: 20px 22px 22px; display: flex; flex-direction: column; gap: 8px; flex: 1; }
+    .title { font-family: var(--serif); font-size: 26px; font-weight: 500; line-height: 1.1; margin: 0; }
+    .subtitle { font-family: var(--serif); font-style: italic; color: var(--accent); margin: 0; }
+    .desc { color: var(--muted); margin: 4px 0 0; }
+    .meta { display: flex; flex-wrap: wrap; gap: 6px; margin-top: auto; padding-top: 12px; }
+    .tag { font-size: 11.5px; padding: 3px 9px; border-radius: 999px; border: 1px solid var(--line); color: var(--muted); }
+
+    .soon {
+      border: 1px dashed var(--line); border-radius: 14px; min-height: 260px; display: grid; place-items: center; text-align: center;
+      color: var(--muted); font-family: var(--serif); font-style: italic; font-size: 18px; padding: 24px;
+    }
+
+    footer { border-top: 1px solid var(--line); padding: 28px 0 40px; color: var(--muted); font-size: 13px; }
+    footer a { border-bottom: 1px solid var(--line); }
+    footer a:hover { color: var(--text); }
+  </style>
+</head>
+<body>
+  <header class="wrap">
+    <p class="eyebrow">A workshop of things that move</p>
+    <h1>3D <em>Experiments</em></h1>
+    <p class="lede">Interactive 3D pieces that run right in your browser. Pick one to step inside. Nothing to install.</p>
+  </header>
+
+  <main class="wrap">
+    <div id="grid" class="grid"></div>
+  </main>
+
+  <footer class="wrap">
+    Built with Three.js · <a href="https://github.com/pmaeria/3d-experiments">Source on GitHub</a>
+  </footer>
+
+  <script type="module">
+    import { experiments } from './experiments.js';
+
+    const grid = document.getElementById('grid');
+    const esc = (s) => s.replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]);
+
+    grid.innerHTML = experiments.map((e) => `
+      <a class="card" href="./${e.slug}/">
+        <div class="thumb">
+          <img src="./thumbs/${e.slug}.jpg" alt="${esc(e.title)}" loading="lazy" />
+          <span class="play">Launch ▸</span>
+        </div>
+        <div class="body">
+          <h2 class="title">${esc(e.title)}</h2>
+          ${e.subtitle ? `<p class="subtitle">${esc(e.subtitle)}</p>` : ''}
+          <p class="desc">${esc(e.description)}</p>
+          <div class="meta">${e.tags.map((t) => `<span class="tag">${esc(t)}</span>`).join('')}</div>
+        </div>
+      </a>`).join('') + `<div class="soon">More experiments on the way…</div>`;
+  </script>
+</body>
+</html>

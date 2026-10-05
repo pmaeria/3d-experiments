@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Prometheus · The Steam Locomotive Explained</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🚂</text></svg>" />
+</head>
+<body>
+  <canvas id="scene"></canvas>
+  <div id="labels"><svg id="leaders"></svg></div>
+
+  <!-- title cartouche -->
+  <header id="cartouche" class="hud">
+    <div class="cart-orn">❦</div>
+    <h1>Prometheus</h1>
+    <div class="cart-sub">The Steam Locomotive Explained</div>
+  </header>
+
+  <!-- left: views & tour -->
+  <aside id="left" class="panel hud">
+    <h2 class="panel-title">The Exhibition</h2>
+    <button id="tourBtn" class="brass-btn big"><span>✦</span> Begin the Guided Tour</button>
+    <div class="section-label">Vantage Points</div>
+    <div id="views" class="view-list"></div>
+    <div class="section-label">Display</div>
+    <div class="toggles">
+      <label class="toggle"><input type="checkbox" id="tCut"><span class="sw"></span><span class="tl">Cutaway</span><kbd>C</kbd></label>
+      <label class="toggle"><input type="checkbox" id="tFlow"><span class="sw"></span><span class="tl">Flow paths</span><kbd>F</kbd></label>
+      <label class="toggle"><input type="checkbox" id="tLabels"><span class="sw"></span><span class="tl">Labels</span><kbd>L</kbd></label>
+      <label class="toggle"><input type="checkbox" id="tDiagram" checked><span class="sw"></span><span class="tl">Cylinder section</span><kbd>V</kbd></label>
+      <label class="toggle"><input type="checkbox" id="tOrbit"><span class="sw"></span><span class="tl">Slow orbit</span><kbd>O</kbd></label>
+      <label class="toggle"><input type="checkbox" id="tSound" checked><span class="sw"></span><span class="tl">Sound</span><kbd>M</kbd></label>
+    </div>
+    <div id="legend" class="legend">
+      <div><i style="--c:#3fa4ff"></i>Feed water</div>
+      <div><i style="--c:#ff8a2a"></i>Hot fire gases</div>
+      <div><i style="--c:#ff3b3b"></i>Live steam</div>
+      <div><i style="--c:#b79bff"></i>Exhaust steam</div>
+    </div>
+  </aside>
+
+  <!-- right: driver's controls -->
+  <aside id="right" class="panel hud">
+    <h2 class="panel-title">Driver’s Controls</h2>
+    <div class="ctl">
+      <div class="plate">Regulator <span id="regVal" class="val">Shut</span></div>
+      <div id="regLever" class="lever" tabindex="0" role="slider" aria-label="Regulator" aria-valuemin="0" aria-valuemax="100"></div>
+    </div>
+    <div class="ctl">
+      <div class="plate">Reverser · Cut-off <span id="revVal" class="val">75% fore</span></div>
+      <input id="reverser" type="range" min="-100" max="100" step="1" value="75" class="brass-range notched" aria-label="Reverser">
+      <div class="scale"><span>Back</span><span>Mid</span><span>Fore</span></div>
+    </div>
+    <div class="ctl">
+      <div class="plate">Fireman <span id="fireVal" class="val"></span></div>
+      <input id="firing" type="range" min="0" max="100" value="35" class="brass-range" aria-label="Firing rate">
+      <label class="toggle small"><input type="checkbox" id="tAuto" checked><span class="sw"></span><span class="tl">Fireman tends the fire &amp; water for you</span></label>
+    </div>
+    <div class="ctl two">
+      <div>
+        <div class="plate">Blower</div>
+        <input id="blower" type="range" min="0" max="100" value="20" class="brass-range" aria-label="Blower">
+      </div>
+      <div>
+        <div class="plate">Test-bed load</div>
+        <input id="load" type="range" min="0" max="100" value="25" class="brass-range" aria-label="Test bed load">
+      </div>
+    </div>
+    <div class="ctl switches">
+      <label class="toggle"><input type="checkbox" id="tInj"><span class="sw"></span><span class="tl">Injector</span><kbd>I</kbd></label>
+      <label class="toggle"><input type="checkbox" id="tDrain" checked><span class="sw"></span><span class="tl">Drain cocks</span><kbd>D</kbd></label>
+    </div>
+    <button id="whistle" class="whistle-btn" aria-label="Whistle (hold)"><span class="handle"></span><span class="wl">Hold to sound the whistle <kbd>W</kbd></span></button>
+    <div class="section-label">Time</div>
+    <div class="time-row">
+      <button class="brass-btn tiny" data-speed="0">❚❚</button>
+      <button class="brass-btn tiny" data-speed="0.05">1/20</button>
+      <button class="brass-btn tiny" data-speed="0.12">1/8</button>
+      <button class="brass-btn tiny" data-speed="0.33">1/3</button>
+      <button class="brass-btn tiny active" data-speed="1">1×</button>
+    </div>
+    <input id="timeScale" type="range" min="0" max="1000" value="1000" class="brass-range thin" aria-label="Time scale">
+  </aside>
+
+  <div id="dock" class="hud">
+  <!-- cylinder section diagram -->
+  <section id="diagram" class="parchment">
+    <div class="parch-head">The Cylinder, in Section <small>(right-hand side)</small></div>
+    <canvas id="diagramCanvas"></canvas>
+  </section>
+  <!-- bottom instruments -->
+  <footer id="instruments">
+    <div class="inst" id="gPressure"></div>
+    <div class="inst glass-wrap">
+      <div class="glass-title">Water</div>
+      <div class="gauge-glass"><div id="waterLevel" class="water"><div class="meniscus"></div></div><div class="glass-shine"></div><div class="crown-mark" title="Top of firebox"></div></div>
+    </div>
+    <div class="inst" id="gSpeed"></div>
+    <div class="inst readouts">
+      <div class="ro"><span>Cut-off</span><b id="roCut">—</b></div>
+      <div class="ro"><span>Power</span><b id="roHp">—</b></div>
+      <div class="ro"><span>Steam made</span><b id="roGen">—</b></div>
+      <div class="ro"><span>Steam used</span><b id="roUse">—</b></div>
+      <div class="ro"><span>Tender water</span><b id="roTw">—</b></div>
+      <div class="ro"><span>Coal</span><b id="roCoal">—</b></div>
+    </div>
+    <div class="inst" id="gFire"></div>
+  </footer>
+  </div>
+
+  <!-- tour & info cards -->
+  <section id="tourCard" class="parchment card hidden">
+    <div class="card-kicker" id="tourStep"></div>
+    <h3 id="tourTitle"></h3>
+    <p id="tourText"></p>
+    <div class="card-actions">
+      <button class="brass-btn" id="tourPrev">← Back</button>
+      <button class="brass-btn" id="tourClose">End tour</button>
+      <button class="brass-btn primary" id="tourNext">Onward →</button>
+    </div>
+  </section>
+  <section id="infoCard" class="parchment card hidden">
+    <button class="close" id="infoClose" aria-label="Close">×</button>
+    <div class="card-kicker">Component</div>
+    <h3 id="infoTitle"></h3>
+    <p id="infoText"></p>
+    <p id="infoDetail" class="detail"></p>
+    <div class="card-actions"><button class="brass-btn" id="infoFocus">Look closer</button></div>
+  </section>
+
+  <div id="tooltip" class="tag hidden"></div>
+  <div id="toasts"></div>
+  <div id="hint" class="hint hidden"></div>
+
+  <!-- intro -->
+  <div id="intro">
+    <div class="intro-frame">
+      <div class="intro-orn">✦ ❦ ✦</div>
+      <div class="intro-kicker">The Hall of Engineering presents</div>
+      <h1 class="intro-title">PROMETHEUS</h1>
+      <div class="intro-sub">An Illustrated Exhibition of the Steam Locomotive</div>
+      <div class="intro-rule"></div>
+      <p class="intro-text">Step inside a working Victorian express engine. Open her up, follow fire, water and steam through every passage, and take the regulator yourself.</p>
+      <button id="enter" class="brass-btn big" disabled>Preparing the engine…</button>
+      <div class="intro-note">Best with sound · drag to look around · scroll to approach · click any part to learn about it</div>
+    </div>
+  </div>
+
+  <script type="module" src="/src/main.js"></script>
+</body>
+</html>
