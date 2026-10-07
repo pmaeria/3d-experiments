@@ -10,4 +10,13 @@ export const experiments = [
     tags: ['Three.js', 'Simulation', 'Educational', 'Sound'],
     date: '2026-10',
   },
+  {
+    slug: 'zodiac',
+    title: 'Zodiac',
+    subtitle: 'The Sky Behind Your Birth Chart',
+    description:
+      'The real sky behind astrology: the Sun, Moon and planets seen from Earth against the twelve signs. Take the guided tour, then explore and share your own birth chart.',
+    tags: ['Three.js', 'Astronomy', 'Educational', 'Guided tour'],
+    date: '2026-10',
+  },
 ];

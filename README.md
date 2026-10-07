@@ -6,6 +6,7 @@ A collection of interactive 3D experiments that run in the browser, published at
 | Experiment | Live | Source |
 | --- | --- | --- |
 | Prometheus: The Steam Locomotive Explained | [Launch](https://pmaeria.github.io/3d-experiments/steam-engine/) | [`experiments/steam-engine`](experiments/steam-engine) |
+| Zodiac: The Sky Behind Your Birth Chart | [Launch](https://pmaeria.github.io/3d-experiments/zodiac/) | [`experiments/zodiac`](experiments/zodiac) |
 
 ## Layout
 

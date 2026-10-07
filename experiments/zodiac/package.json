@@ -1,0 +1,28 @@
+{
+  "name": "zodiac-3d",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Zodiac: The Sky Behind Your Birth Chart",
+  "type": "module",
+  "scripts": {
+    "dev": "vite --port 5327",
+    "build": "vite build",
+    "preview": "vite preview --port 5328",
+    "test": "vitest run",
+    "data:cities": "node scripts/build-cities.mjs",
+    "data:stars": "node scripts/build-stars.mjs",
+    "data:pluto": "node scripts/build-pluto.mjs"
+  },
+  "dependencies": {
+    "@fontsource/cinzel": "^5.3.0",
+    "@fontsource/eb-garamond": "^5.3.0",
+    "@fontsource/im-fell-english-sc": "^5.3.0",
+    "@fontsource/noto-sans-symbols": "^5.3.0",
+    "astronomy-engine": "^2.1.19",
+    "three": "^0.186.1"
+  },
+  "devDependencies": {
+    "vite": "^8.3.2",
+    "vitest": "^5.0.3"
+  }
+}

@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Zodiac · The Sky Behind Your Birth Chart</title>
+  <meta name="description" content="An interactive 3D guide to Western astrology that shows the astronomy underneath it: orrery, Earth-centred zodiac, and the sky from where you stand." />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='44' fill='none' stroke='%23e6b85c' stroke-width='6'/><circle cx='50' cy='50' r='12' fill='%23ffcc33'/></svg>" />
+</head>
+<body class="loading">
+  <canvas id="scene" aria-label="3D view of the sky" tabindex="-1"></canvas>
+  <div id="sceneFade" aria-hidden="true"></div>
+  <div id="labels" aria-hidden="false"></div>
+
+  <header id="topbar" class="hud">
+    <div id="cartouche">
+      <div class="cart-orn" aria-hidden="true">✦</div>
+      <h1>Zodiac</h1>
+      <div class="cart-sub">The sky behind your birth chart</div>
+    </div>
+    <nav id="views" aria-label="View"></nav>
+    <div id="modes"></div>
+  </header>
+
+  <div id="viewSentence" class="hud" aria-live="polite"></div>
+  <div id="compass" class="hud" hidden></div>
+  <aside id="controls" class="panel hud" aria-label="Display controls"></aside>
+  <aside id="modePanel" class="panel hud" aria-label="Tour and chart"></aside>
+  <aside id="panel" class="panel hud" aria-label="Information" aria-live="polite"></aside>
+  <button id="backToMode" class="ghost-btn hud" type="button" hidden></button>
+  <section id="wheelBox" class="hud" aria-label="Chart wheel"></section>
+  <footer id="timedial" class="panel hud" aria-label="Time"></footer>
+
+  <div id="tooltip" role="tooltip" hidden></div>
+  <div id="popover" role="dialog" hidden></div>
+  <div id="modal" hidden></div>
+  <div id="toasts" aria-live="polite"></div>
+  <div id="loader" aria-hidden="true"><div class="ring-spinner"></div><div>Setting up the sky…</div></div>
+
+  <script type="module" src="/src/main.js"></script>
+</body>
+</html>
